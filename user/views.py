@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.views.generic import View
 from django.conf import settings
 from django.http.response import HttpResponse
+from django.contrib.auth import authenticate,login
 from django.core.mail import send_mail
 import re
 from user.models import User
@@ -98,8 +99,44 @@ class ActiveView(View):
 class LoginView(View):
     '''登录'''
     def get(self,request):
-        return render(request,'login.html')
+        if 'username' in request.COOKIES:
+            username = request.COOKIES.get('username')
+            checked = 'checked'
+        else:
+            username = ''
+            checked = ''
+        return render(request,'login.html',{'username':username,'checked':checked})
+        #return render(request, 'login.html')
 
+    def post(self,request):
+        '''登陆校验'''
+        username = request.POST.get('username')
+        password = request.POST.get('pwd')
+        #数据校验
+        user = authenticate(username=username, password=password)
+        if not all([username,password]):
+            return render(request,'login.html',{'errmsg':'数据不完整'})
+        #验证用户
+        if user is not None:
+            if user.is_active:
+                login(request,user)#保存sessionid
+                response = redirect('index')
+
+                #如果记住用户名，下次登陆时直接显示用户名，否则不显示
+                remember = request.POST.get('remember')
+                if remember == 'on':
+                    response.set_cookie('username',username,max_age=3*24*36000)
+                else:
+                    response.delete_cookie('username')
+                print('=======--------------------============')
+                return redirect('index')
+                #return render(request,'index.html')
+
+
+            else:
+                return render(request,'login.html',{'errmsg':'账号未激活'})
+        else:
+            return render(request,'login.html',{'errmsg':'用户名或密码错误'})
 
 
 #You are using pip version 7.1.2, however version 19.0.3 is available.

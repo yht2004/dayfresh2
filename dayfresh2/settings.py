@@ -138,7 +138,19 @@ EMAIL_HOST_USER = 'yanghongtao2004@126.com'
 EMAIL_HOST_PASSWORD = 'yht2004'
 EMAIL_FROM = 'yanghongtao2004@126.com'
 
+#配置redis缓存
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/9",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
 
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
 
 
