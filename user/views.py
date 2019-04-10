@@ -1,8 +1,9 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,reverse
 from django.views.generic import View
 from django.conf import settings
 from django.http.response import HttpResponse
 from django.contrib.auth import authenticate,login
+#from django.core.urlresolvers import
 from django.core.mail import send_mail
 import re
 from user.models import User
@@ -11,8 +12,8 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired
 
 
-def index(request):
-    return render(request,'index.html')
+# def index(request):
+#     return render(request,'index.html')
 
 class RegisterView(View):
     '''注册'''
@@ -61,19 +62,12 @@ class RegisterView(View):
         info = {'confirm':user.id}
         token = serializer.dumps(info)
         token = token.decode()
-        print('------------------========')
+
         #发送邮件
         send_register_active_email.delay(email,username,token)
-        print('-------------------------')
-        # subject = '天天生鲜欢迎信息'
-        # message = ''
-        # sender = settings.EMAIL_FROM
-        # receiver = [email]
-        # html_message = '<h1>%s欢迎成为天天生鲜会员</h1><p>请点击激活链接激活用户</br><a href="http://127.0.0.1:8000/user/active/%s">' \
-        #                'http://127.0.0.1:8000/user/active/%s</a></p>' % (username, token, token)
-        # send_mail(subject,message,sender,receiver,html_message=html_message)
+
         # 返回应答
-        return redirect('index')
+        return redirect(reverse('index'))#使用反向解析url
 
 class ActiveView(View):
     '''用户激活'''
@@ -120,7 +114,7 @@ class LoginView(View):
         if user is not None:
             if user.is_active:
                 login(request,user)#保存sessionid
-                response = redirect('index')
+                response = redirect('good/index')
 
                 #如果记住用户名，下次登陆时直接显示用户名，否则不显示
                 remember = request.POST.get('remember')
@@ -128,8 +122,7 @@ class LoginView(View):
                     response.set_cookie('username',username,max_age=3*24*36000)
                 else:
                     response.delete_cookie('username')
-                print('=======--------------------============')
-                return redirect('index')
+                return response
                 #return render(request,'index.html')
 
 
@@ -139,7 +132,29 @@ class LoginView(View):
             return render(request,'login.html',{'errmsg':'用户名或密码错误'})
 
 
-#You are using pip version 7.1.2, however version 19.0.3 is available.
-#You should consider upgrading via the 'pip install --upgrade pip' command.
+class UserInfo(View):
+    '''用户中心页面'''
+    def get(self,request):
+        return render(request,'user_center_info.html')
+
+class UserOrder(View):
+    '''用户订单页面'''
+    def get(self,request):
+        return render(request,'user_center_order.html')
+
+
+class UserAddress(View):
+    '''用户地址页面'''
+    def get(self,request):
+        return render(request,'user_center_site.html')
+
+
+
+
+
+
+
+
+
 
 
