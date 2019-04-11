@@ -2,14 +2,15 @@ from django.shortcuts import render,redirect,reverse
 from django.views.generic import View
 from django.conf import settings
 from django.http.response import HttpResponse
-from django.contrib.auth import authenticate,login
-#from django.core.urlresolvers import
-from django.core.mail import send_mail
+from django.contrib.auth import authenticate,login,logout
+
 import re
 from user.models import User
 from celery_tasks.tasks import send_register_active_email
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired
+
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # def index(request):
@@ -114,8 +115,10 @@ class LoginView(View):
         if user is not None:
             if user.is_active:
                 login(request,user)#保存sessionid
-                response = redirect('good/index')
-
+                #如果用户未登陆访问资源时，直接跳转到登陆页面
+                next_url = request.GET.get('next',reverse('index'))
+                response = redirect(next_url)
+                #response = redirect(reverse('index'))
                 #如果记住用户名，下次登陆时直接显示用户名，否则不显示
                 remember = request.POST.get('remember')
                 if remember == 'on':
@@ -124,29 +127,32 @@ class LoginView(View):
                     response.delete_cookie('username')
                 return response
                 #return render(request,'index.html')
-
-
             else:
                 return render(request,'login.html',{'errmsg':'账号未激活'})
         else:
             return render(request,'login.html',{'errmsg':'用户名或密码错误'})
 
 
-class UserInfo(View):
+class LogoutView(View):
+    def logout_view(request):
+        logout(request)
+        return redirect(reverse('index'))
+
+class UserInfo(LoginRequiredMixin,View):
     '''用户中心页面'''
     def get(self,request):
-        return render(request,'user_center_info.html')
+        return render(request,'user_center_info.html',{'page':'user'})
 
-class UserOrder(View):
+class UserOrder(LoginRequiredMixin,View):
     '''用户订单页面'''
     def get(self,request):
-        return render(request,'user_center_order.html')
+        return render(request,'user_center_order.html',{'page':'order'})
 
 
-class UserAddress(View):
+class UserAddress(LoginRequiredMixin,View):
     '''用户地址页面'''
     def get(self,request):
-        return render(request,'user_center_site.html')
+        return render(request,'user_center_site.html',{'page':'address'})
 
 
 
