@@ -142,7 +142,7 @@ class UserInfo(LoginRequiredMixin,View):
     '''用户中心页面'''
     def get(self,request):
         return render(request,'user_center_info.html',{'page':'user'})
-
+#用户订单页
 class UserOrder(LoginRequiredMixin,View):
     '''用户订单页面'''
     def get(self,request):
