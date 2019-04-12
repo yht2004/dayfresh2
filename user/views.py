@@ -5,7 +5,7 @@ from django.http.response import HttpResponse
 from django.contrib.auth import authenticate,login,logout
 
 import re
-from user.models import User
+from user.models import User,Address
 from celery_tasks.tasks import send_register_active_email
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired
@@ -152,9 +152,50 @@ class UserOrder(LoginRequiredMixin,View):
 class UserAddress(LoginRequiredMixin,View):
     '''用户地址页面'''
     def get(self,request):
-        return render(request,'user_center_site.html',{'page':'address'})
+        user = request.user
 
+        try:
+            address = Address.objects.get(user=user, is_default=True)
+        except Address.DoesNotExist:
+            address = None
+        return render(request,'user_center_site.html',{'page':'address','address':address})
 
+    def post(self,request):
+        '''添加地址'''
+        #1.接收数据
+        receiver = request.POST.get('receiver')
+        addr = request.POST.get('addr')
+        phone =  request.POST.get('phone')
+        zip_code = request.POST.get('zip_code')
+
+        #2.数据校验
+        if not all([receiver,addr,phone]):
+            return render(request,'user_center_site.html',{'errmsg':'数据不完整'})
+        if not re.match(r'[1][3][5][7][8][0-9]{9}$',phone):
+            return render(request,'user_center_site.html',{'errmsg':'手机号码不正确'})
+        #3.业务处理
+        user = request.user
+
+        try:
+            address = Address.objects.get(user=user, is_default=True)
+        except Address.DoesNotExist:
+            # 不存在默认收货地址
+            address = None
+        #address = Address.objects.get_default_address(user)
+        if address:
+            is_default = False
+        else:
+            is_default = True
+
+        Address.objects.create(user=user,
+                               receiver=receiver,
+                               addr=addr,
+                               zip_code=zip_code,
+                               phone=phone,
+                               is_default=is_default)
+
+        #4.返回应答
+        return redirect(reverse('address'))
 
 
 
