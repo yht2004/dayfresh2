@@ -16,6 +16,6 @@ urlpatterns = [
 
     path('user', UserInfo.as_view(), name='user'),  # 用户中心页面
     path('order', UserOrder.as_view(), name='order'),  # 用户订单页面
-    path('address', UserAddress.as_view(), name='address'),  # 用户地址页面
+    path('address', UserAddress.as_view(), name='address'),  # 用户地址页面，非登陆用户不得访问的资源
 
 ]
