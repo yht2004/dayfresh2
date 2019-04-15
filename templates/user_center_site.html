@@ -14,7 +14,7 @@
 				</div>
 				<h3 class="common_title2">编辑地址</h3>
 				<div class="site_con">
-					<form method="post">
+					<form method="post" action="address">
                         {% csrf_token %}
 						<div class="form_group">
 							<label>收件人：</label>
@@ -33,7 +33,7 @@
 							<input type="text" name="phone">
 						</div>
 
-						<input type="submit" value="提交" class="info_submit">
+						<input type="submit" value="提交" class="info_submit">{{ errmsg }}
 					</form>
 				</div>
 		</div>

@@ -171,11 +171,12 @@ class UserAddress(LoginRequiredMixin,View):
         #2.数据校验
         if not all([receiver,addr,phone]):
             return render(request,'user_center_site.html',{'errmsg':'数据不完整'})
-        if not re.match(r'[1][3][5][7][8][0-9]{9}$',phone):
+        print('this is mark')
+        if not re.match(r'1[35678]\d{9}',phone):
             return render(request,'user_center_site.html',{'errmsg':'手机号码不正确'})
         #3.业务处理
         user = request.user
-
+        print(user)
         try:
             address = Address.objects.get(user=user, is_default=True)
         except Address.DoesNotExist:
