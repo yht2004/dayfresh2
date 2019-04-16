@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tinymce',#富文本编辑器
     'good',
     'user',
 ]
@@ -155,7 +156,12 @@ SESSION_CACHE_ALIAS = "default"
 #配置登陆url地址
 LOGIN_URL = '/user/login'
 
-
+#富文本编辑器配置
+TINYMCE_DEFAULT_CONFIG = {
+    'theme':'advanced',
+    'width':600,
+    'height':400,
+}
 
 
 

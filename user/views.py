@@ -6,15 +6,15 @@ from django.contrib.auth import authenticate,login,logout
 
 import re
 from user.models import User,Address
+from good.models import GoodsSKU
 from celery_tasks.tasks import send_register_active_email
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import SignatureExpired
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django_redis import get_redis_connection
 
 
-# def index(request):
-#     return render(request,'index.html')
 
 class RegisterView(View):
     '''注册'''
@@ -141,8 +141,30 @@ class LogoutView(View):
 class UserInfo(LoginRequiredMixin,View):
     '''用户中心页面'''
     def get(self,request):
-        return render(request,'user_center_info.html',{'page':'user'})
-#用户订单页
+        user = request.user
+        address = Address.objects.get_default_address(user)
+
+        #获取用户历史浏览记录
+        con = get_redis_connection('default')#使用redis存储用户浏览过的商品
+        history_key = 'history_%d'%user.id
+
+        #获取用最近浏览的5个商品的id
+        sku_ids = con.lrange(history_key,0,4)
+
+        #遍历获取用户浏览的商品信息
+        goods_li = []
+        for id in sku_ids:
+            goods = GoodsSKU.objects.get(id=id)
+            goods_li.append(goods)
+
+        context = {'page':'user',
+                   'address':address,
+                   'goods_li':goods_li}
+
+
+
+        return render(request,'user_center_info.html',context)
+
 class UserOrder(LoginRequiredMixin,View):
     '''用户订单页面'''
     def get(self,request):
@@ -154,10 +176,11 @@ class UserAddress(LoginRequiredMixin,View):
     def get(self,request):
         user = request.user
 
-        try:
-            address = Address.objects.get(user=user, is_default=True)
-        except Address.DoesNotExist:
-            address = None
+        # try:
+        #     address = Address.objects.get(user=user, is_default=True)
+        # except Address.DoesNotExist:
+        #     address = None
+        address = Address.objects.get_default_address(user)
         return render(request,'user_center_site.html',{'page':'address','address':address})
 
     def post(self,request):
@@ -171,18 +194,17 @@ class UserAddress(LoginRequiredMixin,View):
         #2.数据校验
         if not all([receiver,addr,phone]):
             return render(request,'user_center_site.html',{'errmsg':'数据不完整'})
-        print('this is mark')
-        if not re.match(r'1[35678]\d{9}',phone):
+
+        if not re.match(r'1[35678]\d{9}',phone):#正则表达式匹配手机号码
             return render(request,'user_center_site.html',{'errmsg':'手机号码不正确'})
         #3.业务处理
         user = request.user
-        print(user)
-        try:
-            address = Address.objects.get(user=user, is_default=True)
-        except Address.DoesNotExist:
-            # 不存在默认收货地址
-            address = None
-        #address = Address.objects.get_default_address(user)
+        # try:
+        #     address = Address.objects.get(user=user, is_default=True)
+        # except Address.DoesNotExist:
+        #     # 不存在默认收货地址
+        #     address = None
+        address = Address.objects.get_default_address(user)
         if address:
             is_default = False
         else:
