@@ -4,7 +4,7 @@ from fdfs_client.client import Fdfs_client
 
 
 class FDFSStorage(Storage):
-    def __int__(self,client_conf=None,base_url=None):
+    def __init__(self,client_conf=None,base_url=None):
         if client_conf is None:
             client_conf = settings.FDFS_CLIENT_CONF
         self.client_conf = client_conf
@@ -19,7 +19,7 @@ class FDFSStorage(Storage):
 
     def _save(self,name,content):
         '''保存文件'''
-        client = Fdfs_client(settings.FDFS_CLIENT_CONF)
+        client = Fdfs_client(self.client_conf)
 
         res = client.upload_by_buffer(content.read())
 
@@ -45,7 +45,7 @@ class FDFSStorage(Storage):
 
     def url(self, name):
         '''返回访问文件的url路径'''
-        return  settings.FDFS_URL + name
+        return  self.base_url + name
 
 
 
