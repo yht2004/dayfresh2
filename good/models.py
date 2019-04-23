@@ -3,7 +3,6 @@ from db.base_model import BaseModel
 from tinymce.models import HTMLField
 
 
-
 class GoodsType(BaseModel):
     '''商品类型模型类'''
     name = models.CharField(max_length=20, verbose_name='种类名称')
@@ -17,7 +16,6 @@ class GoodsType(BaseModel):
 
     def __str__(self):
         return self.name
-
 
 class GoodsSKU(BaseModel):
     '''商品SKU模型类'''

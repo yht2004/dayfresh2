@@ -161,8 +161,6 @@ class UserInfo(LoginRequiredMixin,View):
                    'address':address,
                    'goods_li':goods_li}
 
-
-
         return render(request,'user_center_info.html',context)
 
 class UserOrder(LoginRequiredMixin,View):

@@ -1,9 +1,9 @@
 from django.urls import path,re_path
-from good import views
+from good.views import IndexView
 
 
 urlpatterns = [
 
-    path('index',views.index,name='index'),#首页
+    path('index',IndexView.as_view(),name='index'),#首页
 
 ]

@@ -21,7 +21,7 @@ class FDFSStorage(Storage):
         '''保存文件'''
         client = Fdfs_client(self.client_conf)
 
-        res = client.upload_by_buffer(content.read())
+        res = client.upload_by_buffer(content.read())#上传文件到FastDFS系统
 
         # dict
         # {
