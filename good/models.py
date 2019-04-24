@@ -39,6 +39,9 @@ class GoodsSKU(BaseModel):
         verbose_name = '商品'
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        return self.name
+
 
 class Goods(BaseModel):
     '''商品SPU模型类'''
@@ -51,6 +54,9 @@ class Goods(BaseModel):
         verbose_name = '商品SPU'
         verbose_name_plural = verbose_name
 
+    def __str__(self):
+        return self.name
+
 
 class GoodsImage(BaseModel):
     '''商品图片模型类'''
@@ -61,6 +67,9 @@ class GoodsImage(BaseModel):
         db_table = 'df_goods_image'
         verbose_name = '商品图片'
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
 
 
 class IndexGoodsBanner(BaseModel):
@@ -73,6 +82,9 @@ class IndexGoodsBanner(BaseModel):
         db_table = 'df_index_banner'
         verbose_name = '首页轮播商品'
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
 
 
 class IndexTypeGoodsBanner(BaseModel):
@@ -105,8 +117,8 @@ class IndexPromotionBanner(BaseModel):
         verbose_name = "主页促销活动"
         verbose_name_plural = verbose_name
 
-
-
+    def __str__(self):
+        return self.name
 
 
 

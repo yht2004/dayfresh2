@@ -136,7 +136,7 @@ class LoginView(View):
 class LogoutView(View):
     def logout_view(request):
         logout(request)
-        return redirect(reverse('index'))
+        return redirect(reverse('login'))
 
 class UserInfo(LoginRequiredMixin,View):
     '''用户中心页面'''
