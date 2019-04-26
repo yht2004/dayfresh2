@@ -18,6 +18,7 @@ from django.urls import path,re_path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    re_path(r'^search',include('haystack.urls')),#全文检索
     re_path(r'^tinymce/',include('tinymce.urls')),#富文本编辑器
     re_path(r'^user/',include('user.urls')),
     re_path(r'^good/',include('good.urls')),

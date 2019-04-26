@@ -157,7 +157,7 @@ class ListView(View):
             skus = GoodsSKU.objects.filter(type=type).order_by('-id')
 
         #对数据进行分页
-        paginator = Paginator(skus, 1)
+        paginator = Paginator(skus, 10)
         try:
             page = int(page)
         except Exception as e:

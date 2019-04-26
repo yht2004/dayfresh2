@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'haystack',#全文检索框架
     'tinymce',#富文本编辑器
     'good',
     'user',
@@ -81,7 +82,7 @@ WSGI_APPLICATION = 'dayfresh2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME':'dayfresh2',
+        'NAME':'dailyfresh',#dayfresh2
         'USER':'root',
         'PASSWORD':'123456789',
         'HOST':'localhost',
@@ -174,8 +175,18 @@ FDFS_CLIENT_CONF='./utils/fdfs/client.conf'
 # 设置fdfs存储服务器上nginx的IP和端口号
 FDFS_URL='http://192.168.191.131:8888/'
 
+#全文检索框架配置
+HAYSTACK_CONNECTIONS = {
+    'default':{
+        'ENGINE':'haystack.backends.whoosh_backend.WhooshEngine',
+        #'ENGINE':haystack.backends.whoosh_cn_backend.WhooshEngine
+        'PATH':os.path.join(BASE_DIR,'whoosh_index')
+    }
+}
 
-
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
+#当添加，修改，删除数据时，自动生成索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 
 
