@@ -178,7 +178,7 @@ FDFS_URL='http://192.168.191.131:8888/'
 #全文检索框架配置
 HAYSTACK_CONNECTIONS = {
     'default':{
-        'ENGINE':'haystack.backends.whoosh_backend.WhooshEngine',
+        'ENGINE':'haystack.backends.whoosh_cn_backend.WhooshEngine',
         #'ENGINE':haystack.backends.whoosh_cn_backend.WhooshEngine
         'PATH':os.path.join(BASE_DIR,'whoosh_index')
     }
