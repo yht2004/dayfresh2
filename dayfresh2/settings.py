@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'good',
     'user',
     'order',
+    'cart',
 ]
 
 MIDDLEWARE = [
@@ -190,3 +191,4 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 
 
+#1147238103
