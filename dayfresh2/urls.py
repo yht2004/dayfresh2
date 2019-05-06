@@ -22,4 +22,5 @@ urlpatterns = [
     re_path(r'^tinymce/',include('tinymce.urls')),#富文本编辑器
     re_path(r'^user/',include('user.urls')),
     re_path(r'^good/',include('good.urls')),
+    re_path(r'^cart/',include('cart.urls')),
 ]
