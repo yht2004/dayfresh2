@@ -3,6 +3,7 @@ from django.views.generic import View
 from django.http import JsonResponse
 from django_redis import get_redis_connection
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.csrf import csrf_exempt
 
 from good.models import GoodsSKU
 
@@ -65,17 +66,18 @@ class CartInfoView(LoginRequiredMixin,View):
         cart_key = 'cart_%d'%user.id
         # {'商品id':商品数量}
         cart_dict = conn.hgetall(cart_key)
-
         skus = []
         # 保存用户购物车中商品的总数目和总价格
         total_count = 0
         total_price = 0
         # 遍历获取商品的信息
         for sku_id, count in cart_dict.items():
+            sku_id = int(sku_id)
+            count = int(count)
             # 根据商品的id获取商品的信息
             sku = GoodsSKU.objects.get(id=sku_id)
             # 计算商品的小计
-            amount = sku.price*int(count)
+            amount = sku.price*count
             # 动态给sku对象增加一个属性amount, 保存商品的小计
             sku.amount = amount
             # 动态给sku对象增加一个属性count, 保存购物车中对应商品的数量
@@ -97,6 +99,7 @@ class CartInfoView(LoginRequiredMixin,View):
 
 class UpdateCartView(View):
     '''更新购物车记录'''
+    #@csrf_exempt
     def post(self,request):
         user = request.user
         if not user.is_authenticated:
@@ -136,8 +139,10 @@ class UpdateCartView(View):
         #返回应答
         return JsonResponse({'res':5,'total_count':total_count,'message':'更新成功'})
 
+
 class CartDeleteView(View):
     '''购物车记录删除'''
+   # @csrf_exempt
     def post(self, request):
         '''购物车记录删除'''
         user = request.user
@@ -174,7 +179,6 @@ class CartDeleteView(View):
 
         # 返回应答
         return JsonResponse({'res':3, 'total_count':total_count, 'message':'删除成功'})
-
 
 
 

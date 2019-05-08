@@ -23,4 +23,5 @@ urlpatterns = [
     re_path(r'^user/',include('user.urls')),
     re_path(r'^good/',include('good.urls')),
     re_path(r'^cart/',include('cart.urls')),
+    re_path(r'^order/',include('order.urls')),
 ]
