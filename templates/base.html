@@ -47,7 +47,10 @@
 {# 网页顶部搜索框块 #}
 {% block search_bar %}
 	<div class="search_bar clearfix">
-		<a href="{% url 'index' %}" class="logo fl"><img src="{% static '/images/logo.png' %}"></a>
+        {% block logo %}
+            <a href="{% url 'index' %}" class="logo fl"><img src="{% static '/images/logo.png' %}"></a>
+        {% endblock logo %}
+
 		<div class="search_con fl">
             <form method="get" action="/search">
                 <input type="text" class="input_text fl" name="q" placeholder="搜索商品">

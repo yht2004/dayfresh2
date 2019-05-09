@@ -1,4 +1,8 @@
 {% extends  'base_user_center.html' %}
+{% load staticfiles %}
+{% block logo %}
+     <a href="{% url 'index' %}" class="logo fl"><img src="{% static '/images/logo.png' %}"></a>
+{% endblock logo %}
 {% block right_content %}
 		<div class="right_content clearfix">
 				<div class="info_con clearfix">

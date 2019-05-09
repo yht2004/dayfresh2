@@ -11,12 +11,14 @@ class OrderInfo(BaseModel):
         '4': '银联支付'
     }
 
+
     PAY_METHOD_CHOICES = (
         (1, '货到付款'),
         (2, '微信支付'),
         (3, '支付宝'),
         (4, '银联支付')
     )
+
 
     ORDER_STATUS_CHOICES = (
         (1, '待支付'),
