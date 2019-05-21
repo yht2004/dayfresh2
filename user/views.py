@@ -184,7 +184,7 @@ class UserOrder(LoginRequiredMixin,View):
             order.order_skus = order_skus #动态增加属性，保存订单商品信息
 
         #分页
-        paginator = Paginator(orders, 2)
+        paginator = Paginator(orders, 5)
         try:
             page = int(page)
         except Exception as e:
