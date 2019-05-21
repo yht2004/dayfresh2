@@ -353,7 +353,10 @@ class CommentView(View):
             order_goods.comment = content
             order_goods.save()
 
-            return redirect(reverse('order',kwargs={'page':1}))
+        order.order_status = 5
+        order.save()
+        
+        return redirect(reverse('order',kwargs={'page':1}))
 
 
 
