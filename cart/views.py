@@ -3,7 +3,6 @@ from django.views.generic import View
 from django.http import JsonResponse
 from django_redis import get_redis_connection
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.decorators.csrf import csrf_exempt
 
 from good.models import GoodsSKU
 
@@ -95,7 +94,7 @@ class CartInfoView(LoginRequiredMixin,View):
                    'skus':skus}
 
         # 使用模板
-        return render(request, 'cart.html', context)
+        return render(request, 'cart2.html', context)
 
 class UpdateCartView(View):
     '''更新购物车记录'''
@@ -180,10 +179,51 @@ class CartDeleteView(View):
         # 返回应答
         return JsonResponse({'res':3, 'total_count':total_count, 'message':'删除成功'})
 
+class TestView(View):
+    def post(self,request):
+        str = request.POST.get('str')
+        print(str)
+        return JsonResponse({'res':8,'aaa':'bbb'})
 
 
+#测试代码，无用
+class TestIndexView(LoginRequiredMixin,View):
+    def get(self,request):
+        user = request.user
+        #获取保存在redis中购物车中商品的信息
+        return render(request,'test.html')
+        conn = get_redis_connection('default')
+        cart_key = 'cart_%d'%user.id#不同用户的购物车采用cart_用户id形式保存记录
+        cart_dict = conn.hgetall(cart_key)#商品保存形式{'商品id':'商品数量'}
+        skus = []
+        total_count = 0
+        total_price = 0
+        #遍历购物车中商品信息
+        for sku_id,count in cart_dict.items():
+            sku_id = int(sku_id)
+            count = int(count)
+            sku = GoodsSKU.objects.get(id=sku_id)#根据商品的id获取商品
+            #计算商品小计
+            amount = sku.price*count
+            sku.amount = amount#动态给商品添加amount属性，保存商品小计
+            sku.count = count#动态给商品添加count属性，保存购物车中该商品的数量
+            skus.append(sku)
+            total_count += int(count)
+            total_price += amount
+
+        context = {'total_count':total_count,
+                   'total_price':total_price,
+                   'skus':skus}
+
+        return render(request,'test.html',context)
 
 
+#测试代码,无用
+class Demo(View):
+    def post(self,request):
+        sku_id = request.POST.get('sku_id')
+        print(sku_id)
+        return JsonResponse({'res':0,'message':'result is success'})
 
 
 

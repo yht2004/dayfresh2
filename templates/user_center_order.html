@@ -52,6 +52,14 @@
 {% block bottomfiles %}
     <script src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
     <script>
+    $('.fBtn').click(function () {
+        order_id = 123123123
+        params = {'order_id':order_id,'csrfmiddlewaretoken':'{{ csrf_token }}'}
+        $.post('/order/test',params,function (data) {
+            alert(data.message)
+        })
+    })
+
     $('.oper_btn').each(function () {
         //获取支付状态
         status = $(this).attr('status')

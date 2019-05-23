@@ -355,9 +355,14 @@ class CommentView(View):
 
         order.order_status = 5
         order.save()
-        
+
         return redirect(reverse('order',kwargs={'page':1}))
 
+
+class OrderTest(View):
+    def post(self,request):
+        order_id = request.POST.get('order_id')
+        return JsonResponse({'res':0,'message':'post method success'})
 
 
 
